@@ -20,22 +20,19 @@ public class ConcurrentPlayer implements Runnable {
         Thread ping = new Thread(new ConcurrentPlayer("PING"));
         pong.start();
         ping.start();
-        Thread.sleep(100);
-        pong.interrupt();
-        ping.interrupt();
     }
 
     @Override
     public void run() {
         int i = 0;
-        while (!Thread.currentThread().isInterrupted()) {
+        while (true) {
             lock.lock();
             try {
                 while (mine.equals(current)) {
                     try {
                         condition.await();
                     } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                        throw new RuntimeException(e.getCause());
                     }
                 }
                 System.out.println(mine + ++i);
