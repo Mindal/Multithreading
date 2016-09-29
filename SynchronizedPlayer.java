@@ -13,13 +13,13 @@ public class SynchronizedPlayer implements Runnable {
     @Override
     public void run() {
         int i = 0;
-        while (!Thread.currentThread().isInterrupted()) {
+        while (true) {
             synchronized (lock) {
                 while (mine.equals(current)) {
                     try {
                         lock.wait();
                     } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
+                        throw new RuntimeException(e.getCause());
                     }
 
                 }
@@ -35,9 +35,6 @@ public class SynchronizedPlayer implements Runnable {
         Thread ping = new Thread(new SynchronizedPlayer("PING"));
         pong.start();
         ping.start();
-        Thread.sleep(100);
-        pong.interrupt();
-        ping.interrupt();
     }
 
 
